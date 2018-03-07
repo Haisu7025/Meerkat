@@ -35,6 +35,16 @@ def part_data(num=10):
                         'data/{}/leg'.format(i))
 
 
+def prep_model(init_model=None):
+    model = models.resnet18(pretrained=False)
+    num_frts = model.fc.in_features
+    model.fc = torch.nn.Linear(num_frts, 2)
+    if init_model is None:
+        return model
+    model.load_state_dict(torch.load(init_model))
+    return model
+
+
 def cross_val(val_index, dataloaders, data_sizes, model, criterion, optimizer):
     stime = time.time()
 
@@ -80,14 +90,14 @@ dataloaders = {x: data.DataLoader(
 dataset_sizes = {x: len(img_datasets[x]) for x in range(10)}
 
 # model and training
-model = models.SAE()
+model = prep_model()
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # 10-cross validation
 for val_index in range(10):
     # re-init the network
-    model = models.SAE()
+    model = models.prep_model()
     if torch.cuda.is_available():
         model = model.cuda()
     cross_val(val_index, dataloaders, dataset_sizes,
