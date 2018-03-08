@@ -5,9 +5,9 @@ import requests
 import re
 
 headers = {
-    'Cookie': "PHPSESSID=u6u34bd05vrf2p6s3t2gg88d57; ZH=b003fb2243b1fcf733cc0376f0137a27"}
+    'Cookie': "PHPSESSID=s50q3e8gi1j07t2rn50986hgi6; ZH=53c484aa0e8f9aa2fa0939d1dcccd728"}
 urls = [
-    "http://www.zone-h.org/archive/special=1/page={}?zh=1".format(x) for x in range(1, 2)]
+    "http://www.zone-h.org/archive/special=1/page={}?zh=1".format(x) for x in range(1, 51)]
 f = open('defaced_sites.txt', 'w')
 for url in urls:
     res = requests.get(
@@ -28,4 +28,8 @@ for url in urls:
             '<strong>Domain:</strong> (.*?)</li>',
             rr.text
         )
-        f.write(domain[0] + "\n")
+        for d in domain:
+            print d
+            f.write(d + "\n")
+
+f.close()
